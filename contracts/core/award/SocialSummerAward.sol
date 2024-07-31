@@ -80,10 +80,10 @@ contract SocialSummerAward is EIP712Upgradeable {
         require(nftOwner == msg.sender, 'Invalid sender.');
         ids[_req.erc20Address][_req.id] = _req.amount;
         if (_req.erc20Address == address(0)){
-            require(address(this).balance >= _req.amount);
+            require(address(this).balance >= _req.amount, 'Invalid amount');
             payable(nftOwner).transfer(_req.amount);
         } else {
-            require(IERC20(_req.erc20Address).balanceOf(address(this))>=_req.amount);
+            require(IERC20(_req.erc20Address).balanceOf(address(this))>=_req.amount, 'Invalid amount');
             IERC20(_req.erc20Address).transfer(nftOwner, _req.amount);
         }
         claimedTotalAmount[_req.erc20Address] += _req.amount;
