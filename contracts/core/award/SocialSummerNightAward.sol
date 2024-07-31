@@ -8,6 +8,7 @@ contract SocialSummerNightAward  {
     address public governance;
 
     event ChangeGovernance(address oldGovernance, address newGovernance);
+    event GovernanceClaim(address erc20, address payable to, uint256 amount);
 
     constructor () {
         governance = msg.sender;
@@ -23,10 +24,13 @@ contract SocialSummerNightAward  {
     function governanceClaim(address erc20, address payable to, uint256 amount) public {
         require(msg.sender == governance, 'Not governance');
         if (erc20 == address(0)){
+            require(address(this).balance >= amount, 'Invalid amount');
             to.transfer(amount);
         } else {
+            require(IERC20(erc20).balanceOf(address(this))>=amount, 'Invalid amount');
             IERC20(erc20).transfer(to, amount);
         }
+        emit GovernanceClaim(erc20, to, amount);
     }
 
     receive() external payable {}
